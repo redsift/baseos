@@ -18,8 +18,8 @@ dependencies:
   override:
     - cd skalibs; ./configure && make && sudo make install
     - cd execline; ./configure && make && sudo make install
-    - cd s6; ./configure --exec-prefix=./package && make && sudo make install && cp ./package/bin/* ../root/usr/bin/. && cp ./package/sbin/* ../root/sbin/.
-    - cd nanomsg; sh autogen.sh && ./configure && make && make check && sudo make install
+    - cd s6; ./configure --exec-prefix=./package && make && sudo make install && cp ./package/bin/* ../root/usr/bin/. && sudo cp ./package/sbin/* ../root/sbin/.
+    - cd nanomsg; sh autogen.sh && ./configure --prefix=$(readlink -f ./package) && make && make check && sudo make install && cp -r ./package/* ../root/.
     - docker info
     - docker build -t quay.io/redsift/baseos .    
     
