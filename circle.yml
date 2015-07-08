@@ -1,13 +1,10 @@
 machine:
-  environment:
-    PATH: /usr/local/bin/:${PATH}
   services:
     - docker
-  pre:
-    - curl -k -L -O http://ftp.gnu.org/gnu/make/make-4.1.tar.bz2 && tar xjf make-4.1.tar.bz2 && cd make-4.1 && ./configure && make && sudo make install
       
 checkout:
   post:
+    - git fetch --tags
     - git submodule sync
     - git submodule update --init
     - mkdir -p root/
@@ -17,8 +14,22 @@ dependencies:
     - cd nanomsg; sh autogen.sh && ./configure --prefix=$(readlink -f ./package) && make && make check && sudo make install && cp -r ./package/* ../root/.
     - cd root; curl -k -L https://github.com/just-containers/s6-overlay/releases/download/v1.13.0.0/s6-overlay-amd64.tar.gz | tar xz
     - docker info
-    - sudo docker build -t quay.io/redsift/baseos .    
+    - |
+        ID=$(sudo docker build -t quay.io/redsift/baseos .)
+        VERSION=$(git describe --exact-match --tags || git rev-parse --short HEAD)
+        echo "Tagging as version $VERSION"
+        docker tag $ID quay.io/redsift/baseos:$VERSION
     
 test:
   override:
     - docker run -d quay.io/redsift/baseos; sleep 10    
+    
+deployment:
+  prod:
+    branch: master
+    commands:
+      - docker login -e $QUAY_EMAIL -u $QUAY_USER -p $QUAY_PASS quay.io
+      - |
+        export VERSION=$(git describe || git rev-parse --short HEAD)
+        docker push quay.io/redsift/baseos
+    
