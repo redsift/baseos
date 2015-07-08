@@ -1,4 +1,18 @@
+machine:
+  services:
+    - docker
+    
 checkout:
   post:
     - git submodule sync
     - git submodule update --init
+    
+dependencies:
+  override:
+    - cd s6; ./configure --enable-slashpackage=./slashpackage && make && sudo make install
+    - docker info
+    - docker build -t quay.io/redsift/baseos .    
+    
+test:
+  override:
+    - docker run -d quay.io/redsift/baseos; sleep 10    
