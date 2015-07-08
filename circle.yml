@@ -9,7 +9,9 @@ checkout:
     
 dependencies:
   override:
-    - cd s6; ./configure --enable-slashpackage=./slashpackage && make && sudo make install
+    - cd skalibs; ./configure && make && sudo make install
+    - cd execline; ./configure && make && sudo make install
+    - cd s6; ./configure --prefix=./package && make && sudo make install
     - docker info
     - docker build -t quay.io/redsift/baseos .    
     
