@@ -4,7 +4,7 @@ machine:
   services:
     - docker
   pre:
-    - curl -k -L -O http://ftp.gnu.org/gnu/make/make-4.1.tar.bz2 && tar jzf make-4.1.tar.bz2 && cd make-4.0 && ./configure && make && sudo make install
+    - curl -k -L -O http://ftp.gnu.org/gnu/make/make-4.1.tar.bz2 && tar xjf make-4.1.tar.bz2 && cd make-4.0 && ./configure && make && sudo make install
       
 checkout:
   post:
