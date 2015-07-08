@@ -15,11 +15,18 @@ COPY root /
 # Define working directory.
 WORKDIR /tmp
 
+# Update .so cache
+RUN ldconfig
+
 # Generate the /etc/default/locale entries
 RUN locale-gen en_GB.UTF-8 && update-locale LC_ALL=en_GB.UTF-8 LANG=en_GB.UTF-8
 
 # Prompt and shell settings
 ENV TERM xterm-color
+
+# RFC 5424 log levels http://en.wikipedia.org/wiki/Syslog#Severity_levels
+# defaults to notice, overwrite with -e LOG_LEVEL=7
+ENV LOG_LEVEL 5
 
 # S6 default entry point, limit to 32 service directories and no scanning of new services
 ENTRYPOINT ["/usr/bin/s6-svscan","-c","32","-t","0","/etc/s6"]
