@@ -1,7 +1,11 @@
 machine:
+  environment:
+    PATH: /usr/local/bin/:${PATH}
   services:
     - docker
-    
+  pre:
+    - curl -k -L -O http://ftp.gnu.org/gnu/make/make-4.0.tar.gz && tar xzf make-4.0.tar.gz && cd make-4.0 && ./configure && make && sudo make install
+      
 checkout:
   post:
     - git submodule sync
@@ -11,7 +15,8 @@ dependencies:
   override:
     - cd skalibs; ./configure && make && sudo make install
     - cd execline; ./configure && make && sudo make install
-    - cd s6; ./configure --prefix=./package && make && sudo make install
+    - cd s6; ./configure --prefix=./package && make && make install
+    - cd nanomsg; sh autogen.sh && ./configure && make && make check && make install
     - docker info
     - docker build -t quay.io/redsift/baseos .    
     
