@@ -19,7 +19,10 @@ WORKDIR /tmp
 RUN ldconfig
 
 # Generate the /etc/default/locale entries
-RUN locale-gen en_GB.UTF-8 && update-locale LC_ALL=en_GB.UTF-8 LANG=en_GB.UTF-8
+# Disabled as Circleci prevents this working in LXC containers for now
+# https://bugs.launchpad.net/ubuntu/+source/langpack-locales/+bug/931717
+#
+# RUN locale-gen en_GB.UTF-8 && update-locale LC_ALL=en_GB.UTF-8 LANG=en_GB.UTF-8
 
 # Prompt and shell settings
 ENV TERM xterm-color

@@ -10,18 +10,14 @@ checkout:
   post:
     - git submodule sync
     - git submodule update --init
-    - mkdir -p root/sbin
-    - mkdir -p root/usr/bin
-    - mkdir -p root/etc/s6
+    - mkdir -p root/
     
 dependencies:
   override:
-    - cd skalibs; ./configure && make && sudo make install
-    - cd execline; ./configure && make && sudo make install
-    - cd s6; ./configure --exec-prefix=./package && make && sudo make install && cp ./package/bin/* ../root/usr/bin/. && sudo cp ./package/sbin/* ../root/sbin/.
     - cd nanomsg; sh autogen.sh && ./configure --prefix=$(readlink -f ./package) && make && make check && sudo make install && cp -r ./package/* ../root/.
+    - cd root; curl -k -L https://github.com/just-containers/s6-overlay/releases/download/v1.13.0.0/s6-overlay-amd64.tar.gz | tar xz
     - docker info
-    - docker build -t quay.io/redsift/baseos .    
+    - sudo docker build -t quay.io/redsift/baseos .    
     
 test:
   override:
