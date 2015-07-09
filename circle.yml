@@ -1,6 +1,8 @@
 machine:
   environment:
     CONTAINER_NAME: quay.io/redsift/baseos
+    ETCD_V: v2.1.0-rc.0
+    S6_V: v1.13.0.0
   services:
     - docker
       
@@ -9,12 +11,13 @@ checkout:
     - git fetch --tags
     - git submodule sync
     - git submodule update --init
-    - mkdir -p root/
+    - mkdir -p root/usr/bin/
     
 dependencies:
   override:
+    - curl -L  https://github.com/coreos/etcd/releases/download/$ETCD_V/etcd-$ETCD_V-linux-amd64.tar.gz | tar xz && cp etcd-$ETCD_V-linux-amd64/etcdctl root/usr/bin/etcdctl  
     - cd nanomsg; sh autogen.sh && ./configure --prefix=$(readlink -f ./package) && make && make check && sudo make install && cp -r ./package/* ../root/.
-    - cd root; curl -k -L https://github.com/just-containers/s6-overlay/releases/download/v1.13.0.0/s6-overlay-amd64.tar.gz | tar xz
+    - cd root; curl -k -L https://github.com/just-containers/s6-overlay/releases/download/$S6_V/s6-overlay-amd64.tar.gz | tar xz
     - docker info
     - |
         sudo docker build -t $CONTAINER_NAME .
