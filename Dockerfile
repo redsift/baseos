@@ -31,6 +31,5 @@ ENV TERM xterm-color
 # defaults to notice, overwrite with -e LOG_LEVEL=7
 ENV LOG_LEVEL 5
 
-# S6 default entry point, limit to 32 service directories and no scanning of new services
-ENTRYPOINT ["/usr/bin/s6-svscan","-c","32","-t","0","/etc/s6"]
-CMD []
+# S6 default entry point is the init added from the overlay
+ENTRYPOINT [ "/init" ]
