@@ -1,0 +1,7 @@
+#!/usr/bin/execlineb
+elgetpositionals
+# drop root rights in favor of nobody
+s6-envuidgid -D 32768:32768 nobody
+s6-applyuidgid -U
+emptyenv -P
+redirfd -w 1 /dev/log-fifo-s6-stdio s6-log -p -- $@ 1

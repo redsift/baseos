@@ -1,0 +1,6 @@
+#!/bin/bash
+
+while [ ! -S /dev/log ]
+do
+	inotifywait /dev/ -e create -t 2 -qq
+done

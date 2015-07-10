@@ -1,0 +1,3 @@
+#!/usr/bin/execlineb -P
+
+rsyslogd -f /etc/rsyslog.conf -n

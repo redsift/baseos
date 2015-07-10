@@ -1,0 +1,4 @@
+#!/usr/bin/execlineb -P
+
+foreground { s6-mkfifo /dev/log-fifo-s6-stdio }
+chmod a+w /dev/log-fifo-s6-stdio

@@ -11,7 +11,6 @@ checkout:
     - git fetch --tags
     - git submodule sync
     - git submodule update --init
-    - mkdir -p root/usr/bin/
     
 dependencies:
   override:

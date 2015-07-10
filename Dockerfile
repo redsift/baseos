@@ -1,7 +1,7 @@
 # Inspired by https://github.com/jprjr/docker-ubuntu-stack
 
 FROM ubuntu:15.04
-MAINTAINER Rahul Powar email: rahul@redsift.io version: 1.1.101
+MAINTAINER Rahul Powar email: rahul@redsift.io version: 1.1.102
 
 # Fix for stdin warnings as per https://github.com/mitchellh/vagrant/issues/1673#issuecomment-28287711
 RUN sed -i 's/^mesg n$/tty -s \&\& mesg n/g' /root/.profile
@@ -9,8 +9,16 @@ RUN sed -i 's/^mesg n$/tty -s \&\& mesg n/g' /root/.profile
 # Set home
 ENV HOME /root
 
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update && \
+    apt-get install -y rsyslog rsyslog-gnutls inotify-tools && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 # Copy S6 across
 COPY root /
+
+ADD https://papertrailapp.com/tools/papertrail-bundle.pem /etc/papertrail-bundle.pem
+RUN cd /etc/ && chmod 644 papertrail-bundle.pem && md5sum -c papertrail-bundle.pem.md5
 
 # Define working directory.
 WORKDIR /tmp
