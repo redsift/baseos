@@ -11,7 +11,7 @@ ENV HOME /root
 
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
-    apt-get install -y rsyslog rsyslog-gnutls inotify-tools && \
+    apt-get install -y rsyslog rsyslog-gnutls inotify-tools lsb-release && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Copy S6 across
