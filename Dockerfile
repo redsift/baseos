@@ -9,9 +9,11 @@ RUN sed -i 's/^mesg n$/tty -s \&\& mesg n/g' /root/.profile
 # Set home
 ENV HOME /root
 
+# Install rsyslog (for remote syslog), inotify (for FS changes), lsb-release (for scripts)
+# iproute (for basic ip checks) and e3 (for tiny editing)
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
-    apt-get install -y rsyslog rsyslog-gnutls inotify-tools lsb-release && \
+    apt-get install -y rsyslog rsyslog-gnutls inotify-tools lsb-release iproute e3 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Copy S6 across

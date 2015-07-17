@@ -107,3 +107,7 @@ If you need additional configuration, drop in your files e.g. add `/etc/rsyslog.
 
 Some framework templates may produce a lot of redundancy with follow on logging services. Container, host and timestamps are generally already propagated.
 
+## Editor
+
+Because every not and then you just want to test something...  `e3` or `e3vi`.
+
