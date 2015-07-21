@@ -16,6 +16,9 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get install -y rsyslog rsyslog-gnutls inotify-tools lsb-release iproute e3 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# Cleanup default cron tasks
+RUN rm -f /etc/cron.hourly/* /etc/cron.daily/* /etc/cron.weekly/*  /etc/cron.monthly/*
+
 # Copy S6 across
 COPY root /
 
