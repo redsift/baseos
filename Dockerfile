@@ -34,6 +34,9 @@ RUN ldconfig
 #
 # RUN locale-gen en_GB.UTF-8 && update-locale LC_ALL=en_GB.UTF-8 LANG=en_GB.UTF-8
 
+# Fix for ubuntu to ensure /etc/default/locale is present
+RUN update-locale
+
 # Prompt and shell settings
 ENV TERM xterm-color
 
