@@ -17,7 +17,14 @@ Ensure your application `cont-init.d` files are numbered greater than 10 to ensu
 	
 ## Logging
 
-This container runs a rsyslogd much **against** the principles of a S6 container. This is a practical consideration given the requirements for our systems and the tooling.
+This container can run a rsyslogd much **against** the principles of a S6 container.
+
+Enable this with a file at `/etc/services.d/rsyslogd/run` 
+
+	#!/usr/bin/execlineb -P
+
+	rsyslogd -f /etc/rsyslog.conf -n
+
 
 ### Remote
 
