@@ -10,12 +10,39 @@ Overlays [S6](https://github.com/just-containers/s6-overlay) into a new ubuntu a
 ## Running a shell
 
 	$ docker run -ti --rm quay.io/redsift/baseos /bin/bash
+	
+You can shut down a running service with the [s6-svc](http://skarnet.org/software/s6/s6-svc.html) command. E.g. shut down a confd process.
+
+	$ s6-svc -d /var/run/s6/services/confd
 
 ## Init
 
 Ensure your application `cont-init.d` files are numbered greater than 10 to ensure base scripts can run before you do. The 90 range is preferred e.g. `/etc/cont-init.d/90-confd-onetime`
 	
-## Logging
+## Dependencies
+
+You can use the ready-ness indicator to block until a service is available using `s6-svwait` with `-u` or `-U` of the daemon supports true ready-ness.
+
+	$ s6-svwait [-U | -u] /var/run/s6/services/confd
+
+This can be used to enable dependencies in the container, e.g. you need to run something after a service is running. E.g. create a onshot service as per the following `run` script.
+
+	#!/bin/bash
+
+	set -e
+
+	s6-svwait -u /var/run/s6/services/**service**
+	...
+	s6-svc -O /var/run/s6/services/**onshot**
+
+s6 will relaunch this script till it executes successfully.
+
+
+## Editor
+
+Because every now and then you just want to test something...  `e3` or `e3vi`.	
+	
+## Logging, Optional
 
 This container can run a rsyslogd much **against** the principles of a S6 container.
 
@@ -114,7 +141,4 @@ If you need additional configuration, drop in your files e.g. add `/etc/rsyslog.
 
 Some framework templates may produce a lot of redundancy with follow on logging services. Container, host and timestamps are generally already propagated.
 
-## Editor
-
-Because every not and then you just want to test something...  `e3` or `e3vi`.
 
