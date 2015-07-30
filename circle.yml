@@ -34,4 +34,5 @@ deployment:
     commands:
       - docker login -e $QUAY_EMAIL -u $QUAY_USER -p $QUAY_PASS quay.io
       - docker push $CONTAINER_NAME
-    
+      - "./circle_ci_trigger_build"
+      
