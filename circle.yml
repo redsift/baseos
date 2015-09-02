@@ -1,7 +1,7 @@
 machine:
   environment:
     CONTAINER_NAME: quay.io/redsift/baseos
-    CIRCLE_REVERSE_DEPENDENCIES: mongodb haproxy-confd fleetstation go-jmaparchive go-jmapstream nodeos buildos-ubuntu
+    CIRCLE_REVERSE_DEPENDENCIES: mongodb haproxy-confd fleetstation nodeos buildos-ubuntu
     ETCD_V: v2.1.1
     S6_V: v1.14.0.0
     NANO_MSG: 0.6-beta
@@ -35,5 +35,5 @@ deployment:
     commands:
       - docker login -e $QUAY_EMAIL -u $QUAY_USER -p $QUAY_PASS quay.io
       - docker push $CONTAINER_NAME
-      - "./circle_ci_trigger_build"
+      - ./circle_ci_trigger_build
       
