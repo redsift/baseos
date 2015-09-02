@@ -16,7 +16,7 @@ dependencies:
   override:
     - curl -L  https://github.com/coreos/etcd/releases/download/$ETCD_V/etcd-$ETCD_V-linux-amd64.tar.gz | tar xz && cp etcd-$ETCD_V-linux-amd64/etcdctl root/usr/bin/etcdctl  
     - curl -L  https://github.com/nanomsg/nanomsg/archive/$NANO_MSG.tar.gz | tar xz
-    - cd nanomsg-$NANO_MSG; sh autogen.sh && ./configure --prefix=$(readlink -f ./package) && make && make check && sudo make install && cp -r ./package/* ../root/. && mkdir ../root/usr && mv ../root/include ../root/usr
+    - cd nanomsg-$NANO_MSG; sh autogen.sh && ./configure --prefix=$(readlink -f ./package) && make && make check && sudo make install && cp -r ./package/* ../root/. && mv ../root/include ../root/usr
     - cd root; curl -k -L https://github.com/just-containers/s6-overlay/releases/download/$S6_V/s6-overlay-amd64.tar.gz | tar xz
     - docker info
     - |
