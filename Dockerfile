@@ -13,7 +13,7 @@ ENV HOME /root
 # iproute (for basic ip checks) and e3 (for tiny editing)
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
-    apt-get install -y rsyslog rsyslog-gnutls inotify-tools lsb-release iproute e3 && \
+    apt-get install -y rsyslog rsyslog-gnutls inotify-tools lsb-release iproute e3 ca-certificates && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Cleanup default cron tasks
