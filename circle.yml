@@ -4,7 +4,7 @@ machine:
     CIRCLE_REVERSE_DEPENDENCIES: mongodb haproxy-confd fleetstation nodeos buildos-ubuntu
     ETCD_V: v2.1.1
     S6_V: v1.14.0.4
-    NANO_MSG: 0.6-beta
+    NANO_MSG: 0.8-beta
   services:
     - docker
       
