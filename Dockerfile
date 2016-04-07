@@ -1,6 +1,6 @@
 # Inspired by https://github.com/jprjr/docker-ubuntu-stack
 
-FROM ubuntu:15.10
+FROM ubuntu:15.04
 MAINTAINER Rahul Powar email: rahul@redsift.io version: 1.1.102
 
 # Fix for stdin warnings as per https://github.com/mitchellh/vagrant/issues/1673#issuecomment-28287711
@@ -28,6 +28,19 @@ RUN cd /etc/ && chmod 644 papertrail-bundle.pem && md5sum -c papertrail-bundle.p
 # Define working directory.
 WORKDIR /tmp
 
+# Install nanomsg
+ENV NANO_MSG=0.8-beta
+RUN export DEBIAN_FRONTEND=noninteractive && \ 
+  apt-get update && \
+	apt-get install -y \
+  curl autoconf libtool make && \
+  apt-get clean -y && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN cd /tmp && curl -L https://github.com/nanomsg/nanomsg/archive/$NANO_MSG.tar.gz | tar xz && \
+  cd /tmp/nanomsg-$NANO_MSG && sh autogen.sh && ./configure && make && make check && make install && \
+  rm -rf /tmp/nanomsg-$NANO_MSG
+ 
 # Update .so cache
 RUN ldconfig
 

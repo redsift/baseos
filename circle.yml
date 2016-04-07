@@ -4,7 +4,6 @@ machine:
     CIRCLE_REVERSE_DEPENDENCIES: mongodb haproxy-confd fleetstation nodeos buildos-ubuntu javaos
     ETCD_V: v2.1.1
     S6_V: v1.14.0.4
-    NANO_MSG: 0.8-beta
   services:
     - docker
       
@@ -14,9 +13,7 @@ checkout:
     
 dependencies:
   override:
-    - curl -L  https://github.com/coreos/etcd/releases/download/$ETCD_V/etcd-$ETCD_V-linux-amd64.tar.gz | tar xz && cp etcd-$ETCD_V-linux-amd64/etcdctl root/usr/bin/etcdctl  
-    - curl -L  https://github.com/nanomsg/nanomsg/archive/$NANO_MSG.tar.gz | tar xz
-    - cd nanomsg-$NANO_MSG; sh autogen.sh && ./configure --prefix=$(readlink -f ./package) && make && make check && sudo make install && cp -r ./package/* ../root/. && mv ../root/include ../root/usr
+    - curl -L https://github.com/coreos/etcd/releases/download/$ETCD_V/etcd-$ETCD_V-linux-amd64.tar.gz | tar xz && cp etcd-$ETCD_V-linux-amd64/etcdctl root/usr/bin/etcdctl  
     - cd root; curl -k -L https://github.com/just-containers/s6-overlay/releases/download/$S6_V/s6-overlay-amd64.tar.gz | tar xz
     - docker info
     - |
