@@ -33,13 +33,16 @@ ENV NANO_MSG=0.8-beta
 RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get update && \
 	apt-get install -y \
-  curl autoconf libtool make && \
+  curl autoconf libtool make pkg-config && \
   apt-get clean -y && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN cd /tmp && curl -L https://github.com/nanomsg/nanomsg/archive/$NANO_MSG.tar.gz | tar xz && \
   cd /tmp/nanomsg-$NANO_MSG && sh autogen.sh && ./configure && make && make install && \
   rm -rf /tmp/nanomsg-$NANO_MSG
+
+# pkg-config is needed for nanomsg
+ENV PKG_CONFIG_PATH=/lib/pkgconfig
 
 # Update .so cache
 RUN ldconfig
