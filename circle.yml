@@ -3,17 +3,17 @@ machine:
     CONTAINER_NAME: quay.io/redsift/baseos
     CIRCLE_REVERSE_DEPENDENCIES: mongodb haproxy-confd fleetstation nodeos buildos-ubuntu javaos
     ETCD_V: v2.1.1
-    S6_V: v1.14.0.4
+    S6_V: v1.17.2.0
   services:
     - docker
-      
+
 checkout:
   post:
     - git fetch --tags
-    
+
 dependencies:
   override:
-    - curl -L https://github.com/coreos/etcd/releases/download/$ETCD_V/etcd-$ETCD_V-linux-amd64.tar.gz | tar xz && cp etcd-$ETCD_V-linux-amd64/etcdctl root/usr/bin/etcdctl  
+    - curl -L https://github.com/coreos/etcd/releases/download/$ETCD_V/etcd-$ETCD_V-linux-amd64.tar.gz | tar xz && cp etcd-$ETCD_V-linux-amd64/etcdctl root/usr/bin/etcdctl
     - cd root; curl -k -L https://github.com/just-containers/s6-overlay/releases/download/$S6_V/s6-overlay-amd64.tar.gz | tar xz
     - docker info
     - |
@@ -21,11 +21,11 @@ dependencies:
         VERSION=$(git describe --exact-match --tags 2>/dev/null || git rev-parse --short HEAD)
         echo "Tagging as $CONTAINER_NAME:$VERSION"
         docker tag $CONTAINER_NAME:latest $CONTAINER_NAME:$VERSION
-    
+
 test:
   override:
-    - docker run -d $CONTAINER_NAME; sleep 10    
-    
+    - docker run -d $CONTAINER_NAME; sleep 10
+
 deployment:
   prod:
     branch: master
@@ -33,4 +33,3 @@ deployment:
       - docker login -e $QUAY_EMAIL -u $QUAY_USER -p $QUAY_PASS quay.io
       - docker push $CONTAINER_NAME
       - ./circle_ci_trigger_build
-      
