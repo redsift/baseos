@@ -30,7 +30,7 @@ WORKDIR /tmp
 
 # Install nanomsg
 ENV NANO_MSG=0.8-beta
-RUN export DEBIAN_FRONTEND=noninteractive && \ 
+RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get update && \
 	apt-get install -y \
   curl autoconf libtool make && \
@@ -38,9 +38,9 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN cd /tmp && curl -L https://github.com/nanomsg/nanomsg/archive/$NANO_MSG.tar.gz | tar xz && \
-  cd /tmp/nanomsg-$NANO_MSG && sh autogen.sh && ./configure && make && make check && make install && \
+  cd /tmp/nanomsg-$NANO_MSG && sh autogen.sh && ./configure && make && make install && \
   rm -rf /tmp/nanomsg-$NANO_MSG
- 
+
 # Update .so cache
 RUN ldconfig
 
