@@ -28,17 +28,18 @@ RUN cd /etc/ && chmod 644 papertrail-bundle.pem && md5sum -c papertrail-bundle.p
 # Define working directory.
 WORKDIR /tmp
 
-# Install nanomsg
-ENV NANO_MSG=0.8-beta
 RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get update && \
 	apt-get install -y \
-  curl autoconf libtool make pkg-config && \
+  curl autoconf libtool make cmake pkg-config && \
   apt-get clean -y && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# Install nanomsg
+ENV NANO_MSG=0.9-beta
 RUN cd /tmp && curl -L https://github.com/nanomsg/nanomsg/archive/$NANO_MSG.tar.gz | tar xz && \
-  cd /tmp/nanomsg-$NANO_MSG && sh autogen.sh && ./configure && make && make install && \
+  cd /tmp/nanomsg-$NANO_MSG && mkdir build && cd build && cmake .. && cmake --build . && cmake --build . --target install && \
+  cp /usr/local/lib/pkgconfig/nanomsg.pc /usr/local/lib/pkgconfig/libnanomsg.pc && \
   rm -rf /tmp/nanomsg-$NANO_MSG
 
 # pkg-config is needed for nanomsg
