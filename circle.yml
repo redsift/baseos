@@ -2,7 +2,7 @@ machine:
   environment:
     CONTAINER_NAME: quay.io/redsift/baseos
     CONTAINER_NAME_ALPINE: quay.io/redsift/baseos-alpine
-    CIRCLE_REVERSE_DEPENDENCIES: mongodb haproxy-confd fleetstation nodeos buildos-ubuntu javaos
+    CIRCLE_REVERSE_DEPENDENCIES: mongodb haproxy-confd fleetstation nodeos buildos-ubuntu javaos meteoros
     ETCD_V: v2.1.1
     S6_V: v1.17.2.0
   services:
@@ -32,7 +32,7 @@ test:
   override:
     - docker run -d $CONTAINER_NAME; sleep 10
     - docker run -d $CONTAINER_NAME_ALPINE; sleep 10
-    
+
 deployment:
   prod:
     branch: master
