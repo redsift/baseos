@@ -27,7 +27,7 @@ RUN curl -sL https://github.com/coreos/etcd/releases/download/${ETCD_VERSION}/et
 RUN chmod u+x /usr/bin/etcdctl
 
 # pkg-config is needed for nanomsg
-ENV PKG_CONFIG_PATH=/lib/pkgconfig
+ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 # Install nanomsg
 RUN apk add --no-cache build-base cmake \

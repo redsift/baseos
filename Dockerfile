@@ -36,14 +36,15 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install nanomsg
+# Due to 0.9 rename to nanomsg, some older bindings break so alias nanomsg.pc to libnanomsg.pc - should be removed later
 ENV NANO_MSG=1.0.0
 RUN cd /tmp && curl -L https://github.com/nanomsg/nanomsg/archive/$NANO_MSG.tar.gz | tar xz && \
   cd /tmp/nanomsg-$NANO_MSG && mkdir build && cd build && cmake .. && cmake --build . && cmake --build . --target install && \
-  cp /usr/local/lib/pkgconfig/nanomsg.pc /usr/local/lib/pkgconfig/libnanomsg.pc && \
+  ln -s /usr/local/lib/pkgconfig/nanomsg.pc /usr/local/lib/pkgconfig/libnanomsg.pc && \
   rm -rf /tmp/nanomsg-$NANO_MSG
 
 # pkg-config is needed for nanomsg
-ENV PKG_CONFIG_PATH=/lib/pkgconfig
+ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 # Update .so cache
 RUN ldconfig
