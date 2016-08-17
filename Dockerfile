@@ -66,7 +66,8 @@ ENV TERM xterm-color
 ENV LOG_LEVEL 5
 
 # Change the onetime and fixup stage to terminate on error
-ENV S6_BEHAVIOUR_IF_STAGE2_FAILS 2
+# Keep container environment variables
+ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2 S6_KEEP_ENV=1
 
 # S6 default entry point is the init added from the overlay
 ENTRYPOINT [ "/init" ]

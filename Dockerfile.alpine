@@ -15,7 +15,7 @@ RUN apk --update upgrade \
  && mkdir -p /etc/cont-finish.d \
  && mkdir -p /etc/cont-init.d \
  && mkdir -p /etc/fix-attrs.d \
- && mkdir -p /etc/services.d 
+ && mkdir -p /etc/services.d
 
 # Copy static config across
 COPY root /
@@ -23,7 +23,7 @@ COPY root /
 RUN curl -sL https://github.com/coreos/etcd/releases/download/${ETCD_VERSION}/etcd-${ETCD_VERSION}-linux-amd64.tar.gz | tar xz \
     && cp etcd-${ETCD_VERSION}-linux-amd64/etcdctl /usr/bin/etcdctl \
     && rm -Rf etcd-${ETCD_VERSION}-linux-amd64
-   
+
 RUN chmod u+x /usr/bin/etcdctl
 
 # pkg-config is needed for nanomsg
@@ -38,7 +38,7 @@ RUN apk add --no-cache build-base cmake \
     && apk del build-base cmake
 
 # Due to 0.9 rename to nanomsg, some older bindings break so alias nanomsg.pc to libnanomsg.pc - should be removed later
-# Can't make CMAKE_INSTALL_LIBDIR point to the right place 
+# Can't make CMAKE_INSTALL_LIBDIR point to the right place
 RUN mv /usr/local/lib64/* /usr/local/lib \
     && rm -Rf /usr/local/lib64 \
     && ln -s /usr/local/lib/pkgconfig/nanomsg.pc /usr/local/lib/pkgconfig/libnanomsg.pc
@@ -54,7 +54,7 @@ RUN cd /etc/ && chmod 644 papertrail-bundle.pem && md5sum -c /etc/papertrail-bun
 
 # Change the onetime and fixup stage to terminate on error
 
-ENV TERM=xterm-color LOG_LEVEL=5 S6_BEHAVIOUR_IF_STAGE2_FAILS=2
+ENV TERM=xterm-color LOG_LEVEL=5 S6_BEHAVIOUR_IF_STAGE2_FAILS=2 S6_KEEP_ENV=1
 
 # S6 default entry point is the init added from the overlay
 ENTRYPOINT [ "/init" ]
