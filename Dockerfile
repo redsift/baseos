@@ -70,4 +70,4 @@ ENV LOG_LEVEL 5
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2 S6_KEEP_ENV=1
 
 # S6 default entry point is the init added from the overlay
-ENTRYPOINT [ "/init" ]
+ENTRYPOINT [ "/custom-init" ]

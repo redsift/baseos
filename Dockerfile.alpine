@@ -57,4 +57,4 @@ RUN cd /etc/ && chmod 644 papertrail-bundle.pem && md5sum -c /etc/papertrail-bun
 ENV TERM=xterm-color LOG_LEVEL=5 S6_BEHAVIOUR_IF_STAGE2_FAILS=2 S6_KEEP_ENV=1
 
 # S6 default entry point is the init added from the overlay
-ENTRYPOINT [ "/init" ]
+ENTRYPOINT [ "/custom-init" ]
