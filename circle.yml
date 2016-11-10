@@ -2,7 +2,7 @@ machine:
   environment:
     CONTAINER_NAME: quay.io/redsift/baseos
     CONTAINER_NAME_ALPINE: quay.io/redsift/baseos-alpine
-    CIRCLE_REVERSE_DEPENDENCIES: mongodb haproxy fleetstation nodeos buildos-ubuntu javaos meteoros
+    CIRCLE_REVERSE_DEPENDENCIES: mongodb haproxy nodeos buildos-ubuntu javaos meteoros
     ETCD_V: v2.3.7
     S6_V: v1.18.1.5
   services:
