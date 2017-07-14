@@ -1,7 +1,7 @@
-FROM alpine:3.4
+FROM alpine:3.6
 MAINTAINER Rahul Powar email: rahul@redsift.io version: 2.1.102
 
-ENV S6_VERSION=v1.18.1.5 ETCD_VERSION=v2.3.7 NANO_MSG=1.0.0
+ENV S6_VERSION=v1.18.1.5 NANO_MSG=1.0.0
 
 # Set home
 ENV HOME /root
@@ -19,12 +19,6 @@ RUN apk --update upgrade \
 
 # Copy static config across
 COPY root /
-
-RUN curl -sL https://github.com/coreos/etcd/releases/download/${ETCD_VERSION}/etcd-${ETCD_VERSION}-linux-amd64.tar.gz | tar xz \
-    && cp etcd-${ETCD_VERSION}-linux-amd64/etcdctl /usr/bin/etcdctl \
-    && rm -Rf etcd-${ETCD_VERSION}-linux-amd64
-
-RUN chmod u+x /usr/bin/etcdctl
 
 # pkg-config is needed for nanomsg
 ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
