@@ -1,6 +1,6 @@
 # Inspired by https://github.com/jprjr/docker-ubuntu-stack
 
-FROM ubuntu:16.04
+FROM ubuntu:16.10
 MAINTAINER Rahul Powar email: rahul@redsift.io version: 1.1.102
 
 # Fix for stdin warnings as per https://github.com/mitchellh/vagrant/issues/1673#issuecomment-28287711
