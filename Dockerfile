@@ -1,6 +1,6 @@
 # Inspired by https://github.com/jprjr/docker-ubuntu-stack
 
-FROM ubuntu:16.10
+FROM ubuntu:17.10
 MAINTAINER Rahul Powar email: rahul@redsift.io version: 1.1.102
 
 # Fix for stdin warnings as per https://github.com/mitchellh/vagrant/issues/1673#issuecomment-28287711
@@ -13,7 +13,7 @@ ENV HOME /root
 # iproute (for basic ip checks) and e3 (for tiny editing)
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
-    apt-get install -y rsyslog rsyslog-gnutls inotify-tools lsb-release iproute e3 ca-certificates && \
+    apt-get install -y locales rsyslog rsyslog-gnutls inotify-tools lsb-release iproute e3 ca-certificates && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Cleanup default cron tasks
