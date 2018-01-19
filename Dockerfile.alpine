@@ -1,4 +1,4 @@
-FROM alpine:3.6
+FROM alpine:3.7
 MAINTAINER Rahul Powar email: rahul@redsift.io version: 2.1.102
 
 ENV S6_VERSION=v1.18.1.5 NANO_MSG=1.1.2
