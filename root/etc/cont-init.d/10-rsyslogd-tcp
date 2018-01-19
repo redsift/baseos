@@ -1,6 +1,0 @@
-#!/usr/bin/with-contenv /bin/bash
-
-if [ ! -z "$TCP_SYSLOG" ]
-then
-	echo "*.*         @@$TCP_SYSLOG" > /etc/rsyslog.d/90-tcp-host.conf
-fi

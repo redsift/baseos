@@ -1,9 +1,0 @@
-#!/usr/bin/with-contenv /bin/bash
-
-
-ID=$(cat /proc/self/cgroup | grep "docker" | sed s/\\//\\n/g | tail -1 | sed -e 's/^docker-\(.\{12\}\).*/\1/')
-HOST=$(hostname)
-
-CONF=${LOGGED_HOST:-"$ID.$HOST"}
-
-echo "\$LocalHostName $CONF" > /etc/rsyslog.d/1-hostname.conf

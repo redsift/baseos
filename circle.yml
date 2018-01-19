@@ -1,8 +1,7 @@
 machine:
   environment:
     CONTAINER_NAME: quay.io/redsift/baseos
-    CONTAINER_NAME_ALPINE: quay.io/redsift/baseos-alpine
-    CIRCLE_REVERSE_DEPENDENCIES: haproxy nodeos buildos-ubuntu javaos meteoros
+    CIRCLE_REVERSE_DEPENDENCIES: nodeos buildos-ubuntu javaos meteoros
     S6_V: v1.18.1.5
   services:
     - docker
@@ -13,11 +12,6 @@ checkout:
 
 dependencies:
   override:
-    - |
-        sudo docker build -t $CONTAINER_NAME_ALPINE -f Dockerfile.alpine .
-        VERSION=$(git describe --exact-match --tags 2>/dev/null || git rev-parse --short HEAD)
-        echo "Tagging as $CONTAINER_NAME_ALPINE:$VERSION"
-        docker tag $CONTAINER_NAME_ALPINE:latest $CONTAINER_NAME_ALPINE:$VERSION
     - cd root; curl -k -L https://github.com/just-containers/s6-overlay/releases/download/$S6_V/s6-overlay-amd64.tar.gz | tar xz
     - docker info
     - |
@@ -29,7 +23,6 @@ dependencies:
 test:
   override:
     - docker run -d $CONTAINER_NAME; sleep 10
-    - docker run -d $CONTAINER_NAME_ALPINE; sleep 10
 
 deployment:
   prod:
@@ -37,5 +30,4 @@ deployment:
     commands:
       - docker login -e $QUAY_EMAIL -u $QUAY_USER -p $QUAY_PASS quay.io
       - docker push $CONTAINER_NAME
-      - docker push $CONTAINER_NAME_ALPINE
       - ./circle_ci_trigger_build

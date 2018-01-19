@@ -1,7 +1,7 @@
 # Inspired by https://github.com/jprjr/docker-ubuntu-stack
 
 FROM ubuntu:17.10
-MAINTAINER Rahul Powar email: rahul@redsift.io version: 1.1.102
+MAINTAINER Deepak Prabhakara email: deepak@redsift.io version: 1.1.102
 
 # Fix for stdin warnings as per https://github.com/mitchellh/vagrant/issues/1673#issuecomment-28287711
 RUN sed -i 's/^mesg n$/tty -s \&\& mesg n/g' /root/.profile
@@ -13,7 +13,7 @@ ENV HOME /root
 # iproute (for basic ip checks) and e3 (for tiny editing)
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
-    apt-get install -y locales rsyslog rsyslog-gnutls inotify-tools lsb-release iproute e3 ca-certificates && \
+    apt-get install -y locales lsb-release iproute e3 ca-certificates && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Cleanup default cron tasks
@@ -21,9 +21,6 @@ RUN rm -f /etc/cron.hourly/* /etc/cron.daily/* /etc/cron.weekly/*  /etc/cron.mon
 
 # Copy S6 across
 COPY root /
-
-ADD https://papertrailapp.com/tools/papertrail-bundle.pem /etc/papertrail-bundle.pem
-RUN cd /etc/ && chmod 644 papertrail-bundle.pem && md5sum -c papertrail-bundle.pem.md5
 
 # Define working directory.
 WORKDIR /tmp
