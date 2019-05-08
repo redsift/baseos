@@ -26,7 +26,7 @@ jobs:
               echo "Tagging as $CONTAINER_NAME:beta"
               docker tag $imageName $CONTAINER_NAME:beta
             fi
-      - run: docker login -e $QUAY_EMAIL -u $QUAY_USER -p $QUAY_PASS quay.io
+      - run: docker login -u $QUAY_USER -p $QUAY_PASS quay.io
       - run: ./circle_ci_trigger_build
 
 workflows:
