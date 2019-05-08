@@ -1,3 +1,4 @@
+version: 2
 jobs:
   container:
     environment:
@@ -13,20 +14,20 @@ jobs:
       - run:
           name: Build and tag container
           command: |
-          SHA="${CIRCLE_SHA1:0:7}"
-          SUFFIX="-beta"
-          tagName=(${CIRCLE_BRANCH/-/ }) # release-1 => release
-          if [ $tagName == "release" ]; then
-            SUFFIX=""
-          fi
-          export IMAGE_NAME=$CONTAINER_NAME:$SHA$SUFFIX
+            SHA="${CIRCLE_SHA1:0:7}"
+            SUFFIX="-beta"
+            tagName=(${CIRCLE_BRANCH/-/ }) # release-1 => release
+            if [ $tagName == "release" ]; then
+              SUFFIX=""
+            fi
+            export IMAGE_NAME=$CONTAINER_NAME:$SHA$SUFFIX
 
-          docker build -t $IMAGE_NAME .
+            docker build -t $IMAGE_NAME .
 
-          if [[ "$tagName" == "release" ]]4; then
-            echo "Tagging as $CONTAINER_NAME:latest"
-            docker tag $imageName $CONTAINER_NAME:latest
-          fi
+            if [[ "$tagName" == "release" ]]4; then
+              echo "Tagging as $CONTAINER_NAME:latest"
+              docker tag $imageName $CONTAINER_NAME:latest
+            fi
       - run: echo $IMAGE_NAME
 
 workflows:
