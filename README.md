@@ -1,6 +1,6 @@
 # Docker container based on S6
 
-[![Circle CI](https://circleci.com/gh/Redsift/baseos.svg?style=svg)](https://circleci.com/gh/Redsift/baseos)
+[![Circle CI](https://circleci.com/gh/redsift/baseos.svg?style=svg)](https://circleci.com/gh/redsift/baseos)
 
 Image | Quay
 ----|-----
