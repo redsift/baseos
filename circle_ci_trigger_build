@@ -4,6 +4,6 @@ repoList=( $CIRCLE_REVERSE_DEPENDENCIES )
 
 for repo in "${repoList[@]}"
 do
-	echo Triggering CI build $repo && \
-	curl -X POST --header "Content-Type: application/json" -d '{"branch":"master"}' https://circleci.com/api/v1.1/project/github/redsift/$repo/build?circle-token=$CIRCLE_TOKEN
+	echo Triggering CI build $repo
+	# curl -X POST --header "Content-Type: application/json" -d '{"branch":"master"}' https://circleci.com/api/v1.1/project/github/redsift/$repo/build?circle-token=$CIRCLE_TOKEN
 done
