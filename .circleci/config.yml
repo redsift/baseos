@@ -27,6 +27,7 @@ jobs:
               docker tag $imageName $CONTAINER_NAME:beta
             fi
       - run: docker login -u $QUAY_USER -p $QUAY_PASS quay.io
+      - run: docker push $CONTAINER_NAME > /dev/null
       - run: ./circle_ci_trigger_build
 
 workflows:
