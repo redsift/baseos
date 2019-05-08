@@ -12,22 +12,22 @@ jobs:
       - setup_remote_docker
       - run: cd root; curl -k -L https://github.com/just-containers/s6-overlay/releases/download/$S6_V/s6-overlay-amd64.tar.gz | tar xz
       - run:
-          name: Build and tag container
           command: |
             SHA="${CIRCLE_SHA1:0:7}"
             tagName=(${CIRCLE_BRANCH/-/ }) # release-1 => release
-            export IMAGE_NAME=$CONTAINER_NAME:$SHA
+            export imageName=$CONTAINER_NAME:$SHA
 
-            docker build -t $IMAGE_NAME .
+            docker build -t $imageName .
 
             if [[ "$tagName" == "release" ]]; then
               echo "Tagging as $CONTAINER_NAME:latest"
-              docker tag $IMAGE_NAME $CONTAINER_NAME:latest
+              docker tag $imageName $CONTAINER_NAME:latest
             else
-              echo "Tagging as $CONTAINER_NAME:latest"
-              docker tag $IMAGE_NAME $CONTAINER_NAME:beta
+              echo "Tagging as $CONTAINER_NAME:beta"
+              docker tag $imageName $CONTAINER_NAME:beta
             fi
-      - run: echo $IMAGE_NAME
+      - run: docker login -e $QUAY_EMAIL -u $QUAY_USER -p $QUAY_PASS quay.io
+      - run: ./circle_ci_trigger_build
 
 workflows:
   version: 2
