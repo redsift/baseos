@@ -3,7 +3,7 @@ jobs:
   container:
     environment:
       CONTAINER_NAME: quay.io/redsift/baseos
-      CIRCLE_REVERSE_DEPENDENCIES: nodeos buildos-ubuntu javaos meteoros
+      CIRCLE_REVERSE_DEPENDENCIES: nodeos buildos-ubuntu javaos
       S6_V: v1.18.1.5
     docker:
       - image: cibuilds/docker:18.09.6
