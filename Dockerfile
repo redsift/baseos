@@ -1,7 +1,6 @@
 # Inspired by https://github.com/jprjr/docker-ubuntu-stack
 
 FROM ubuntu:18.04
-MAINTAINER Deepak Prabhakara email: deepak@redsift.io version: 1.1.102
 
 # Fix for stdin warnings as per https://github.com/mitchellh/vagrant/issues/1673#issuecomment-28287711
 RUN sed -i 's/^mesg n$/tty -s \&\& mesg n/g' /root/.profile
