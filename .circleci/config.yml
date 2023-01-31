@@ -6,7 +6,7 @@ jobs:
       CIRCLE_REVERSE_DEPENDENCIES: nodeos buildos-ubuntu javaos
       S6_V: v1.18.1.5
     docker:
-      - image: cibuilds/docker:18.09.6
+      - image: cimg/base:2023.01
     steps:
       - checkout
       - setup_remote_docker
@@ -25,7 +25,7 @@ jobs:
             echo "Tagging as $CONTAINER_NAME:${suffix}"
             docker tag $imageName $CONTAINER_NAME:${suffix}
       - run: docker login -u $QUAY_USER -p $QUAY_PASS quay.io
-      - run: docker push $CONTAINER_NAME > /dev/null
+      - run: docker push -q -a $CONTAINER_NAME
       - run: ./circle_ci_trigger_build
 
 workflows:
