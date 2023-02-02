@@ -1,5 +1,10 @@
 version: 2.1
 
+defaults:
+  environment: &default_env
+    ALPINE_VERSION: "3.17"
+    S6_V: v1.18.1.5
+
 executors:
   base:
     shell: /bin/bash
@@ -11,8 +16,8 @@ jobs:
     executor: base
 
     environment:
+      <<: *default_env
       CONTAINER_NAME: quay.io/redsift/baseos-alpine
-      ALPINE_VERSION: "3.17"
 
     steps:
       - checkout
@@ -43,8 +48,8 @@ jobs:
     executor: base
 
     environment:
+      <<: *default_env
       CONTAINER_NAME: quay.io/redsift/alpine-rocksdb
-      ALPINE_VERSION: "3.17"
 
     steps:
       - checkout
@@ -54,7 +59,7 @@ jobs:
           name: Build container
           command: |
             VERSION=$(git describe --exact-match --tags 2>/dev/null || git rev-parse --short HEAD)
-            docker build --build-arg=VERSION="$ALPINE_VERSION" -t ${CONTAINER_NAME} -f Dockerfile .
+            docker build --build-arg=VERSION="$ALPINE_VERSION" -t ${CONTAINER_NAME} alpine-rocksdb
             for TAG in "$VERSION" "$CIRCLE_BRANCH" "$ALPINE_VERSION"; do
               docker tag ${CONTAINER_NAME}:latest "${CONTAINER_NAME}:${TAG}"
             done
@@ -73,8 +78,8 @@ jobs:
     executor: base
 
     environment:
+      <<: *default_env
       CONTAINER_NAME: quay.io/redsift/baseos
-      S6_V: v1.18.1.5
 
     steps:
       - checkout
