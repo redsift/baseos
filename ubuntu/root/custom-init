@@ -1,0 +1,12 @@
+#!/bin/bash
+HOST_ENV_FILE=/root/.host_env
+
+if [ -f $HOST_ENV_FILE ];
+then
+   echo "Host env file exists, exporting data."
+	 source $HOST_ENV_FILE
+else
+   echo "Host env file does not exist."
+fi
+
+exec /init "$@"

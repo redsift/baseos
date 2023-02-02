@@ -1,12 +1,50 @@
-version: 2
-jobs:
-  container:
-    environment:
-      CONTAINER_NAME: quay.io/redsift/baseos
-      CIRCLE_REVERSE_DEPENDENCIES: nodeos buildos-ubuntu javaos
-      S6_V: v1.18.1.5
+executors:
+  docker:
+    shell: /bin/bash
     docker:
       - image: cimg/base:2023.01
+
+version: 2
+jobs:
+  alpine:
+    environment:
+      CONTAINER_NAME: quay.io/redsift/baseos-alpine
+      ALPINE_VERSION: "3.17"
+
+    executor: docker
+
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: docker login -u $QUAY_USER -p $QUAY_PASS quay.io
+      - run:
+          name: Build container
+          command: |
+            VERSION=$(git describe --exact-match --tags 2>/dev/null || git rev-parse --short HEAD)
+            docker build --build-arg=VERSION=$ALPINE_VERSION -t ${CONTAINER_NAME} -f Dockerfile .
+            for TAG in $VERSION $CIRCLE_BRANCH $ALPINE_VERSION; do
+              docker tag ${CONTAINER_NAME}:latest ${CONTAINER_NAME}:${TAG}
+            done
+
+      - run:
+          name: Test container
+          command: |
+            docker run -d ${CONTAINER_NAME} true
+
+      - run:
+          name: Push container to the registry
+          command: |
+            docker push -q -a ${CONTAINER_NAME}
+
+      # todo: trigger build of dependant images
+
+  ubuntu:
+    environment:
+      CONTAINER_NAME: quay.io/redsift/baseos
+      S6_V: v1.18.1.5
+
+    executor: docker
+
     steps:
       - checkout
       - setup_remote_docker
@@ -26,11 +64,14 @@ jobs:
             docker tag $imageName $CONTAINER_NAME:${suffix}
       - run: docker login -u $QUAY_USER -p $QUAY_PASS quay.io
       - run: docker push -q -a $CONTAINER_NAME
-      - run: ./circle_ci_trigger_build
+
+      # todo: trigger build of dependant images
 
 workflows:
   version: 2
   build:
     jobs:
-      - container:
+      - alpine:
+          context: org-global
+      - ubuntu:
           context: org-global
