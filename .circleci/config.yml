@@ -1,17 +1,18 @@
+version: 2.1
+
 executors:
-  docker:
+  base:
     shell: /bin/bash
     docker:
       - image: cimg/base:2023.01
 
-version: 2
 jobs:
   alpine:
+    executor: base
+
     environment:
       CONTAINER_NAME: quay.io/redsift/baseos-alpine
       ALPINE_VERSION: "3.17"
-
-    executor: docker
 
     steps:
       - checkout
@@ -39,11 +40,11 @@ jobs:
       # todo: trigger build of dependant images
 
   ubuntu:
+    executor: base
+
     environment:
       CONTAINER_NAME: quay.io/redsift/baseos
       S6_V: v1.18.1.5
-
-    executor: docker
 
     steps:
       - checkout
