@@ -39,6 +39,36 @@ jobs:
 
       # todo: trigger build of dependant images
 
+  alpine-rocksdb:
+    executor: base
+
+    environment:
+      CONTAINER_NAME: quay.io/redsift/alpine-rocksdb
+      ALPINE_VERSION: "3.17"
+
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: docker login -u $QUAY_USER -p $QUAY_PASS quay.io
+      - run:
+          name: Build container
+          command: |
+            VERSION=$(git describe --exact-match --tags 2>/dev/null || git rev-parse --short HEAD)
+            docker build --build-arg=VERSION="$ALPINE_VERSION" -t ${CONTAINER_NAME} -f Dockerfile .
+            for TAG in "$VERSION" "$CIRCLE_BRANCH" "$ALPINE_VERSION"; do
+              docker tag ${CONTAINER_NAME}:latest "${CONTAINER_NAME}:${TAG}"
+            done
+      - run:
+          name: Test container
+          command: |
+            docker run ${CONTAINER_NAME} true
+      - run:
+          name: Push container to the registry
+          command: |
+            docker push -q -a ${CONTAINER_NAME}
+
+      # todo: trigger build of dependant images
+
   ubuntu:
     executor: base
 
@@ -74,5 +104,11 @@ workflows:
     jobs:
       - alpine:
           context: org-global
+          requires:
+            - alpine-rocksdb
+
+      - alpine-rocksdb:
+          context: org-global
+
       - ubuntu:
           context: org-global
