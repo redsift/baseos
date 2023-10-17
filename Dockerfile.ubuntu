@@ -1,0 +1,63 @@
+
+ARG VERSION_ID
+FROM ubuntu:${VERSION_ID}
+
+ARG S6_OVERLAY_VERSION=v3.1.5.0
+
+# Fix for stdin warnings as per https://github.com/mitchellh/vagrant/issues/1673#issuecomment-28287711
+RUN sed -i 's/^mesg n$/tty -s \&\& mesg n/g' /root/.profile
+
+# Set home
+ENV HOME /root
+
+# Install rsyslog (for remote syslog), inotify (for FS changes), lsb-release (for scripts)
+# iproute (for basic ip checks) and e3 (for tiny editing)
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update && \
+    apt-get install -y locales lsb-release iproute2 e3 ca-certificates && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Cleanup default cron tasks
+RUN rm -f /etc/cron.hourly/* /etc/cron.daily/* /etc/cron.weekly/*  /etc/cron.monthly/*
+
+# Copy scripts
+COPY root /
+
+# Define working directory.
+WORKDIR /tmp
+
+RUN export DEBIAN_FRONTEND=noninteractive && \
+  apt-get update && \
+	apt-get install -y \
+  curl autoconf libtool make cmake pkg-config && \
+  apt-get clean -y && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Install S6 including legacy symlinks
+RUN curl -sSL https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz | tar -C / -Jxp && \
+    curl -sSL  https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz | tar -C / -Jxp && \
+    curl -sSL https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/s6-overlay-symlinks-noarch.tar.xz | tar -C / -Jxp && \
+    curl -sSL https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/s6-overlay-symlinks-arch.tar.xz | tar -C / -Jxp
+
+# Generate the /etc/default/locale entries
+# Disabled as Circleci prevents this working in LXC containers for now
+# https://bugs.launchpad.net/ubuntu/+source/langpack-locales/+bug/931717
+#
+# RUN locale-gen en_GB.UTF-8 && update-locale LC_ALL=en_GB.UTF-8 LANG=en_GB.UTF-8
+
+# Fix for ubuntu to ensure /etc/default/locale is present
+RUN update-locale
+
+# Prompt and shell settings
+ENV TERM xterm-color
+
+# RFC 5424 log levels http://en.wikipedia.org/wiki/Syslog#Severity_levels
+# defaults to notice, overwrite with -e LOG_LEVEL=7
+ENV LOG_LEVEL 5
+
+# Change the onetime and fixup stage to terminate on error
+# Keep container environment variables
+ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2 S6_KEEP_ENV=1
+
+# S6 default entry point is the init added from the overlay
+ENTRYPOINT [ "/custom-init" ]

@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 jobs:
   container:
     environment:
@@ -28,9 +28,42 @@ jobs:
       - run: docker push -q -a $CONTAINER_NAME
       - run: ./circle_ci_trigger_build
 
+  container_ubuntu:
+    parameters:
+      versionid:
+        description: "Version ID of the ubuntu base image"
+        type: string
+    environment:
+      CONTAINER_NAME: quay.io/redsift/baseos
+      CIRCLE_REVERSE_DEPENDENCIES: ""
+      VERSION_ID: << parameters.versionid >>
+    docker:
+      - image: cimg/base:2023.01
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          command: |
+            SHA="${CIRCLE_SHA1:0:7}"
+            branch=(${CIRCLE_BRANCH/-/ }) # release-1 => release
+            export imageName=$CONTAINER_NAME:${VERSION_ID}-$SHA
+
+            docker build -t $imageName --build-arg VERSION_ID=${VERSION_ID} -f Dockerfile.ubuntu .
+            suffix="${VERSION_ID}-beta"
+            if [[ "$branch" == "release" ]]; then
+              suffix="${VERSION_ID}"
+            fi
+            echo "Tagging as $CONTAINER_NAME:${suffix}"
+            docker tag $imageName $CONTAINER_NAME:${suffix}
+      - run: docker login -u $QUAY_USER -p $QUAY_PASS quay.io
+      - run: docker push -q -a $CONTAINER_NAME
+
 workflows:
-  version: 2
   build:
     jobs:
       - container:
+          context: org-global
+      - container_ubuntu:
+          versionid: '22.04'
+          name: build-ubuntu-22.04
           context: org-global
