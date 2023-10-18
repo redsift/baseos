@@ -3,6 +3,7 @@ ARG VERSION_ID
 FROM ubuntu:${VERSION_ID}
 
 ARG S6_OVERLAY_VERSION=v3.1.5.0
+ARG NANO_MSG=1.1.2
 
 # Fix for stdin warnings as per https://github.com/mitchellh/vagrant/issues/1673#issuecomment-28287711
 RUN sed -i 's/^mesg n$/tty -s \&\& mesg n/g' /root/.profile
@@ -14,7 +15,7 @@ ENV HOME /root
 # iproute (for basic ip checks) and e3 (for tiny editing)
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
-    apt-get install -y locales lsb-release iproute2 e3 ca-certificates && \
+    apt-get install -y xz-utils curl locales lsb-release iproute2 e3 ca-certificates && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Cleanup default cron tasks
@@ -26,18 +27,29 @@ COPY root /
 # Define working directory.
 WORKDIR /tmp
 
-RUN export DEBIAN_FRONTEND=noninteractive && \
-  apt-get update && \
-	apt-get install -y \
-  curl autoconf libtool make cmake pkg-config && \
-  apt-get clean -y && \
-  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 # Install S6 including legacy symlinks
 RUN curl -sSL https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz | tar -C / -Jxp && \
     curl -sSL  https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz | tar -C / -Jxp && \
     curl -sSL https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/s6-overlay-symlinks-noarch.tar.xz | tar -C / -Jxp && \
     curl -sSL https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/s6-overlay-symlinks-arch.tar.xz | tar -C / -Jxp
+
+# Install nanomsg
+# Due to 0.9 rename to nanomsg, some older bindings break so alias nanomsg.pc to libnanomsg.pc - should be removed later
+ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+
+RUN export DEBIAN_FRONTEND=noninteractive && \
+  apt-get update && \
+	apt-get install -y \
+  autoconf libtool make cmake pkg-config && \
+  cd /tmp && curl -L https://github.com/nanomsg/nanomsg/archive/$NANO_MSG.tar.gz | tar xz && \
+  cd /tmp/nanomsg-$NANO_MSG && mkdir build && cd build && cmake .. && cmake --build . && cmake --build . --target install && \
+  ln -s /usr/local/lib/pkgconfig/nanomsg.pc /usr/local/lib/pkgconfig/libnanomsg.pc && \
+  rm -rf /tmp/nanomsg-$NANO_MSG && \
+  ldconfig && \
+  apt-get remove -y autoconf libtool make cmake pkg-config && apt-get auto-remove -y && \
+  apt-get clean -y && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 
 # Generate the /etc/default/locale entries
 # Disabled as Circleci prevents this working in LXC containers for now
